@@ -143,6 +143,62 @@
     max-width: 560px; margin-bottom: 48px;
     animation: fadeSlideUp 0.6s ease 0.2s both;
   }
+  #auth-section {
+    margin-bottom: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: fadeSlideUp 0.6s ease 0.25s both;
+  }
+  #login-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  #login-form input {
+    padding: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+  }
+  #login-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    color: #fff;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  #login-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,212,255,0.25);
+  }
+  #user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+  }
+  #user-info button {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  #user-info button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
   .hero-stats {
     display: flex; gap: 40px; flex-wrap: wrap;
     animation: fadeSlideUp 0.6s ease 0.3s both;
@@ -557,6 +613,19 @@
     <p class="hero-sub">
       MetaForge is a structured learning environment where you master the art of communicating with AI systems. Practice across six cognitive levels — from basic recall to complex creation — and measure your progress with a research-based rubric.
     </p>
+    <div id="auth-section">
+      <div id="login-form">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="loginEmail()">Login</button>
+        <button onclick="registerEmail()">Register</button>
+        <button onclick="loginGoogle()">Login with Google</button>
+      </div>
+      <div id="user-info">
+        <span id="user-email"></span>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
     <div class="hero-stats">
       <div class="stat">
         <div class="stat-num">6</div>
@@ -681,7 +750,83 @@
   </div>
 </footer>
 
-<script>
+<script type="module">
+// Firebase SDK imports and initialization
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+// Your web app's Firebase configuration for metaforgedemo
+const firebaseConfig = {
+  apiKey: "AIzaSyB2r1xzGD_u8QCSzYwwdl8Cn-bGl7_4Gak",
+  authDomain: "metaforgedemo.firebaseapp.com",
+  projectId: "metaforgedemo",
+  storageBucket: "metaforgedemo.firebasestorage.app",
+  messagingSenderId: "165537338076",
+  appId: "1:165537338076:web:d2dd7aec6891e01cb29a19"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+// Firebase Authentication State Management
+onAuthStateChanged(auth, (user) => {
+  const loginForm = document.getElementById('login-form');
+  const userInfo = document.getElementById('user-info');
+  const userEmail = document.getElementById('user-email');
+  if (user) {
+    loginForm.style.display = 'none';
+    userInfo.style.display = 'flex';
+    userEmail.textContent = `Logged in as: ${user.email}`;
+  } else {
+    loginForm.style.display = 'flex';
+    userInfo.style.display = 'none';
+  }
+});
+
+// Email/Password Login Function
+window.loginEmail = async function() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert('Login successful!');
+  } catch (error) {
+    alert('Login failed: ' + error.message);
+  }
+};
+
+// Email/Password Registration Function
+window.registerEmail = async function() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert('Registration successful! You are now logged in.');
+  } catch (error) {
+    alert('Registration failed: ' + error.message);
+  }
+};
+
+// Google Login Function
+window.loginGoogle = async function() {
+  try {
+    await signInWithPopup(auth, provider);
+    alert('Google login successful!');
+  } catch (error) {
+    alert('Google login failed: ' + error.message);
+  }
+};
+
+// Logout Function
+window.logout = async function() {
+  await signOut(auth);
+  alert('Logged out successfully!');
+};
+
 /* ═══════════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════════ */
@@ -696,7 +841,7 @@ const LEVELS = [
     task: {
       title: "The Definition Task",
       objective: "Write a prompt that instructs an AI to recall and list key definitions and terminology. Your prompt should specify the domain, the number of terms expected, and the format of the output.",
-      prompt: <span class="hl">// SCENARIO</span>\nYou are studying for an AI literacy exam covering fundamental concepts in machine learning.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt to an AI system that will cause it to generate a structured list of <span class="hl3">10 foundational machine learning terms</span> with their definitions.\n\nYour prompt should specify:\n• The <span class="hl">domain</span> (machine learning fundamentals)\n• The <span class="hl">number</span> of terms (exactly 10)\n• The <span class="hl">format</span> expected for each entry\n• The <span class="hl">difficulty level</span> (beginner-friendly),
+      prompt: `<span class="hl">// SCENARIO</span>\nYou are studying for an AI literacy exam covering fundamental concepts in machine learning.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt to an AI system that will cause it to generate a structured list of <span class="hl3">10 foundational machine learning terms</span> with their definitions.\n\nYour prompt should specify:\n• The <span class="hl">domain</span> (machine learning fundamentals)\n• The <span class="hl">number</span> of terms (exactly 10)\n• The <span class="hl">format</span> expected for each entry\n• The <span class="hl">difficulty level</span> (beginner-friendly)`,
       instructions: [
         "Write your prompt in a separate document or paper.",
         "Be explicit about exactly what information you want recalled.",
@@ -719,7 +864,7 @@ const LEVELS = [
     task: {
       title: "The Concept Translator",
       objective: "Write a prompt that directs an AI to explain a complex concept in accessible language. Your prompt must define the audience, depth of explanation, and use of analogies.",
-      prompt: <span class="hl">// SCENARIO</span>\nYou're creating study material for high school students who have no prior coding experience.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to explain <span class="hl3">how neural networks learn</span> to a non-technical audience.\n\nYour prompt should include:\n• <span class="hl">Audience definition</span> (age group, background)\n• A request for an <span class="hl">analogy</span> to make the concept relatable\n• <span class="hl">Length constraints</span> (e.g., 200–250 words)\n• Instruction to <span class="hl">avoid jargon</span> or define any technical term used\n• A <span class="hl">summary sentence</span> at the end,
+      prompt: `<span class="hl">// SCENARIO</span>\nYou're creating study material for high school students who have no prior coding experience.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to explain <span class="hl3">how neural networks learn</span> to a non-technical audience.\n\nYour prompt should include:\n• <span class="hl">Audience definition</span> (age group, background)\n• A request for an <span class="hl">analogy</span> to make the concept relatable\n• <span class="hl">Length constraints</span> (e.g., 200–250 words)\n• Instruction to <span class="hl">avoid jargon</span> or define any technical term used\n• A <span class="hl">summary sentence</span> at the end`,
       instructions: [
         "Draft a prompt that specifies audience clearly — don't just say 'explain simply'.",
         "Include explicit instructions about analogies and examples.",
@@ -742,7 +887,7 @@ const LEVELS = [
     task: {
       title: "The Problem Solver",
       objective: "Write a prompt that instructs an AI to solve a specific, well-defined problem using domain knowledge. Your prompt should specify context, constraints, and expected solution format.",
-      prompt: <span class="hl">// SCENARIO</span>\nA small business owner needs to reduce customer churn and has asked for an AI-generated action plan.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt instructing an AI to <span class="hl3">create a 30-day customer retention plan</span> for a subscription-based software product.\n\nYour prompt should include:\n• <span class="hl">Role prompting</span> — assign the AI a relevant persona\n• The <span class="hl">business context</span> (type of product, average users, churn rate ~15%)\n• <span class="hl">Specific deliverables</span> (weekly milestones, tactics per week)\n• <span class="hl">Format requirements</span> (structured table or phased plan)\n• A constraint: <span class="hl">budget under $500/month</span>,
+      prompt: `<span class="hl">// SCENARIO</span>\nA small business owner needs to reduce customer churn and has asked for an AI-generated action plan.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt instructing an AI to <span class="hl3">create a 30-day customer retention plan</span> for a subscription-based software product.\n\nYour prompt should include:\n• <span class="hl">Role prompting</span> — assign the AI a relevant persona\n• The <span class="hl">business context</span> (type of product, average users, churn rate ~15%)\n• <span class="hl">Specific deliverables</span> (weekly milestones, tactics per week)\n• <span class="hl">Format requirements</span> (structured table or phased plan)\n• A constraint: <span class="hl">budget under $500/month</span>`,
       instructions: [
         "Use role prompting — assign a persona like 'Act as a Customer Success strategist'.",
         "Provide enough context so the AI doesn't make assumptions about the business.",
@@ -765,7 +910,7 @@ const LEVELS = [
     task: {
       title: "The Comparative Analyst",
       objective: "Write a prompt that instructs an AI to analyze and compare two or more subjects across multiple structured dimensions. Your prompt must specify the comparison criteria and output structure.",
-      prompt: <span class="hl">// SCENARIO</span>\nYou are preparing a research brief comparing two competing AI language model approaches for a graduate seminar.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">compare GPT-style autoregressive models vs BERT-style masked models</span> across multiple analytical dimensions.\n\nYour prompt must specify:\n• Exactly <span class="hl">which dimensions</span> to compare (e.g., architecture, training objective, use cases, strengths/weaknesses)\n• Output as a <span class="hl">structured comparison table</span> with rows per dimension\n• A <span class="hl">brief analytical paragraph</span> after the table synthesizing key differences\n• A <span class="hl">chain-of-thought directive</span> — ask the AI to reason step-by-step before concluding\n• Minimum <span class="hl">4 comparison dimensions</span>,
+      prompt: `<span class="hl">// SCENARIO</span>\nYou are preparing a research brief comparing two competing AI language model approaches for a graduate seminar.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">compare GPT-style autoregressive models vs BERT-style masked models</span> across multiple analytical dimensions.\n\nYour prompt must specify:\n• Exactly <span class="hl">which dimensions</span> to compare (e.g., architecture, training objective, use cases, strengths/weaknesses)\n• Output as a <span class="hl">structured comparison table</span> with rows per dimension\n• A <span class="hl">brief analytical paragraph</span> after the table synthesizing key differences\n• A <span class="hl">chain-of-thought directive</span> — ask the AI to reason step-by-step before concluding\n• Minimum <span class="hl">4 comparison dimensions</span>`,
       instructions: [
         "Define each comparison axis explicitly — don't leave any dimension open to interpretation.",
         "Request chain-of-thought: 'Before generating the table, reason through each dimension.'",
@@ -788,7 +933,7 @@ const LEVELS = [
     task: {
       title: "The Critical Evaluator",
       objective: "Write a prompt that asks an AI to evaluate and rank multiple options against explicit criteria, justify each judgment, and produce a final recommendation with caveats.",
-      prompt: <span class="hl">// SCENARIO</span>\nYour university's computer science department is selecting a programming language to teach first-year students in their intro course.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">evaluate and rank Python, JavaScript, and Java</span> as first-year teaching languages.\n\nYour prompt must include:\n• <span class="hl">Five explicit evaluation criteria</span> (e.g., learning curve, ecosystem, employability, readability, tooling)\n• A <span class="hl">weighted scoring instruction</span> — define which criteria matter most\n• Request a <span class="hl">ranked comparison table</span> then a justified final recommendation\n• Ask the AI to <span class="hl">acknowledge counterarguments</span> to its recommendation\n• Include a directive to <span class="hl">cite reasoning</span> for each score given,
+      prompt: `<span class="hl">// SCENARIO</span>\nYour university's computer science department is selecting a programming language to teach first-year students in their intro course.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">evaluate and rank Python, JavaScript, and Java</span> as first-year teaching languages.\n\nYour prompt must include:\n• <span class="hl">Five explicit evaluation criteria</span> (e.g., learning curve, ecosystem, employability, readability, tooling)\n• A <span class="hl">weighted scoring instruction</span> — define which criteria matter most\n• Request a <span class="hl">ranked comparison table</span> then a justified final recommendation\n• Ask the AI to <span class="hl">acknowledge counterarguments</span> to its recommendation\n• Include a directive to <span class="hl">cite reasoning</span> for each score given`,
       instructions: [
         "Define all five criteria before asking for evaluation — do not let AI choose criteria.",
         "Assign weights (e.g., 'weight readability 30%, employability 25%...').",
@@ -811,7 +956,7 @@ const LEVELS = [
     task: {
       title: "The Prompt Architect",
       objective: "Write a meta-prompt — a prompt that generates another high-quality prompt. Your meta-prompt must specify all elements of the output prompt including its structure, strategies, format, and evaluation criteria it should satisfy.",
-      prompt: <span class="hl">// SCENARIO</span>\nYou are designing a prompt template library for an educational technology startup. You need to create reusable, high-quality prompts that teachers can deploy for different subjects.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a <span class="hl3">meta-prompt</span> — a prompt that instructs an AI to generate a complete, production-ready prompt template for teaching <span class="hl3">critical thinking skills in high school history</span>.\n\nYour meta-prompt must specify that the generated prompt should include:\n• <span class="hl">Role assignment</span> for the AI (Socratic tutor, debate facilitator, etc.)\n• <span class="hl">Scaffolded sub-questions</span> using decomposition\n• <span class="hl">Format directives</span> (how output should be structured for student use)\n• <span class="hl">Cognitive demand level</span> targeting analysis and evaluation\n• <span class="hl">Modifiable variables</span> marked with [BRACKETS] for teacher customization\n• A built-in <span class="hl">self-evaluation checklist</span> at the end of the template,
+      prompt: `<span class="hl">// SCENARIO</span>\nYou are designing a prompt template library for an educational technology startup. You need to create reusable, high-quality prompts that teachers can deploy for different subjects.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a <span class="hl3">meta-prompt</span> — a prompt that instructs an AI to generate a complete, production-ready prompt template for teaching <span class="hl3">critical thinking skills in high school history</span>.\n\nYour meta-prompt must specify that the generated prompt should include:\n• <span class="hl">Role assignment</span> for the AI (Socratic tutor, debate facilitator, etc.)\n• <span class="hl">Scaffolded sub-questions</span> using decomposition\n• <span class="hl">Format directives</span> (how output should be structured for student use)\n• <span class="hl">Cognitive demand level</span> targeting analysis and evaluation\n• <span class="hl">Modifiable variables</span> marked with [BRACKETS] for teacher customization\n• A built-in <span class="hl">self-evaluation checklist</span> at the end of the template`,
       instructions: [
         "This is a meta-task: your prompt must CREATE another prompt. Think recursively.",
         "Specify exactly what components the output prompt should contain — don't be vague.",
@@ -924,7 +1069,7 @@ LEVELS.forEach((lv, i) => {
   const card = document.createElement('div');
   card.className = 'level-card';
   card.style.setProperty('--card-color', lv.color);
-  card.style.animationDelay = ${i * 0.08}s;
+  card.style.animationDelay = `${i * 0.08}s`;
   card.innerHTML = `
     <div class="card-num">${lv.id}</div>
     <div class="card-badge" style="color:${lv.color};background:${lv.color}18;border-color:${lv.color}33;">${lv.icon} Level ${lv.id}</div>
@@ -949,7 +1094,7 @@ function openTask(lv, card) {
   panel.classList.add('visible');
 
   // Badge & title
-  document.getElementById('tp-badge').textContent = Level ${lv.id} · ${lv.bloom};
+  document.getElementById('tp-badge').textContent = `Level ${lv.id} · ${lv.bloom}`;
   document.getElementById('tp-badge').style.color = lv.color;
   document.getElementById('tp-badge').style.borderColor = lv.color + '55';
   document.getElementById('tp-badge').style.background = lv.color + '18';
@@ -960,13 +1105,13 @@ function openTask(lv, card) {
   prog.innerHTML = '';
   for (let i = 1; i <= 6; i++) {
     const s = document.createElement('div');
-    s.className = progress-step${i <= lv.id ? ' done' : ''};
+    s.className = `progress-step${i <= lv.id ? ' done' : ''}`;
     if (i <= lv.id) s.style.background = lv.color;
     prog.appendChild(s);
   }
 
   // Objective
-  document.getElementById('tp-objective').innerHTML = <strong>🎯 Learning Objective</strong>${lv.task.objective};
+  document.getElementById('tp-objective').innerHTML = `<strong>🎯 Learning Objective</strong>${lv.task.objective}`;
 
   // Prompt box
   document.getElementById('tp-prompt').innerHTML = lv.task.prompt.replace(/\n/g, '<br>');
@@ -974,7 +1119,7 @@ function openTask(lv, card) {
   // Instructions
   const instEl = document.getElementById('tp-instructions');
   instEl.innerHTML = `<h4>// How to Approach This Task</h4><ul class="instruction-list">${
-    lv.task.instructions.map(i => <li>${i}</li>).join('')
+    lv.task.instructions.map(i => `<li>${i}</li>`).join('')
   }</ul>`;
 
   // Meta
@@ -1001,7 +1146,7 @@ const rubricGrid = document.getElementById('rubric-grid');
 RUBRIC.forEach((r, i) => {
   const card = document.createElement('div');
   card.className = 'rubric-card';
-  card.style.animationDelay = ${i * 0.07}s;
+  card.style.animationDelay = `${i * 0.07}s`;
   card.innerHTML = `
     <div class="rubric-header" onclick="toggleRubric(this)">
       <div class="rubric-header-left">
@@ -1045,7 +1190,7 @@ const taxVis = document.getElementById('tax-visual');
 TAX_DATA.forEach((t, i) => {
   const row = document.createElement('div');
   row.className = 'tax-item';
-  row.style.animationDelay = ${i * 0.1}s;
+  row.style.animationDelay = `${i * 0.1}s`;
   row.innerHTML = `
     <div class="tax-name" style="color:${t.color}">${t.name}</div>
     <div class="tax-bar-wrap">
