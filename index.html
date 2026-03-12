@@ -1,598 +1,685 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MetaForge – Prompt Engineering Training</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #050a0f;
-    --surface: #0a1520;
-    --surface2: #0f1e30;
-    --border: #1a3045;
-    --accent: #00d4ff;
-    --accent2: #ff6b35;
-    --accent3: #7c3aed;
-    --text: #e2f0ff;
-    --muted: #6a8aaa;
-    --glow: 0 0 30px rgba(0,212,255,0.15);
-    --glow2: 0 0 30px rgba(124,58,237,0.2);
-    --font-display: 'Syne', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetaForge - AI Prompt Engineering Training Platform</title>
+  <style>
+    /* Add your existing CSS styles here - I'm including basic structure */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      line-height: 1.6;
+    }
+    .wrapper { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    
+    /* Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #222;
+      z-index: 100;
+      padding: 16px 0;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .logo span {
+      font-size: 12px;
+      color: #666;
+      margin-left: 8px;
+    }
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 32px;
+    }
+    .nav-links a {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-badge {
+      background: #1a1a1a;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #666;
+      border: 1px solid #222;
+    }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Hero Section */
+    #hero {
+      padding: 120px 0 80px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .hero-title {
+      font-size: 72px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+    .line-1, .line-2 {
+      display: block;
+    }
+    .line-2 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      max-width: 700px;
+      margin: 0 auto 40px;
+      color: #999;
+      font-size: 18px;
+      line-height: 1.8;
+    }
 
-  html { scroll-behavior: smooth; }
+    /* Auth Section */
+    #auth-section {
+      margin: 40px auto;
+      max-width: 500px;
+    }
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #1a1a1a;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #222;
+    }
+    #login-form input {
+      padding: 12px 16px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+    }
+    #login-form input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    #login-form button {
+      padding: 12px 24px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #login-form button:hover {
+      background: #5568d3;
+    }
+    #user-info {
+      display: none;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+      padding: 16px 24px;
+      border-radius: 12px;
+      border: 1px solid #222;
+    }
+    #user-email {
+      color: #999;
+      font-size: 14px;
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+    /* Hero Stats */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 60px auto 40px;
+    }
+    .stat {
+      background: #1a1a1a;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #222;
+    }
+    .stat-num {
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
 
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0.5;
-  }
+    /* CTA Buttons */
+    .hero-cta-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .btn-primary, .btn-secondary {
+      padding: 14px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #999;
+      border: 1px solid #333;
+    }
+    .btn-secondary:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
 
-  /* ── GRID BACKGROUND ── */
-  .grid-bg {
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
-  }
+    /* Sections */
+    section {
+      padding: 80px 0;
+    }
+    .divider {
+      height: 1px;
+      background: #222;
+      margin-bottom: 60px;
+    }
+    .section-head {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .section-tag {
+      color: #667eea;
+      font-size: 14px;
+      margin-bottom: 12px;
+      font-family: monospace;
+    }
+    .section-title {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .section-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section-desc {
+      color: #999;
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 16px;
+    }
 
-  /* ── GLOW ORBS ── */
-  .orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-    animation: orbFloat 12s ease-in-out infinite;
-  }
-  .orb-1 { width: 500px; height: 500px; background: rgba(0,212,255,0.06); top: -150px; right: -100px; animation-delay: 0s; }
-  .orb-2 { width: 400px; height: 400px; background: rgba(124,58,237,0.07); bottom: 0; left: -100px; animation-delay: 6s; }
-  .orb-3 { width: 300px; height: 300px; background: rgba(255,107,53,0.05); top: 50%; left: 50%; animation-delay: 3s; }
-  @keyframes orbFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+    /* Level Cards */
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .level-card {
+      background: #1a1a1a;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .level-card:hover {
+      border-color: var(--card-color);
+      transform: translateY(-4px);
+    }
+    .level-card.active {
+      border-color: var(--card-color);
+      background: rgba(102, 126, 234, 0.05);
+    }
+    .card-num {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 64px;
+      font-weight: 900;
+      color: #0a0a0a;
+      opacity: 0.5;
+    }
+    .card-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-bottom: 12px;
+      border: 1px solid;
+    }
+    .card-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .card-desc {
+      color: #999;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .card-arrow {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .card-arrow span {
+      margin-left: 8px;
+      transition: margin 0.2s;
+    }
+    .level-card:hover .card-arrow span {
+      margin-left: 12px;
+    }
 
-  /* ── LAYOUT ── */
-  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    /* Task Panel */
+    #task-panel {
+      background: #1a1a1a;
+      border: 2px solid var(--tl-color, #667eea);
+      border-radius: 12px;
+      margin-top: 40px;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.4s;
+    }
+    #task-panel.visible {
+      opacity: 1;
+      max-height: 3000px;
+      margin-bottom: 40px;
+    }
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid #222;
+    }
+    .task-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .task-level-badge {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .task-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .task-close {
+      background: transparent;
+      border: 1px solid #333;
+      color: #999;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .task-close:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .task-body {
+      padding: 32px;
+    }
+    .task-progress {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .progress-step {
+      height: 4px;
+      flex: 1;
+      background: #222;
+      border-radius: 2px;
+    }
+    .progress-step.done {
+      background: var(--tl-color);
+    }
+    .task-objective {
+      background: #0a0a0a;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      border-left: 4px solid var(--tl-color);
+      line-height: 1.8;
+    }
+    .task-objective strong {
+      display: block;
+      color: var(--tl-color);
+      margin-bottom: 8px;
+    }
+    .task-prompt-label {
+      font-family: monospace;
+      color: #667eea;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    .task-prompt-box {
+      background: #0a0a0a;
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid #222;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .hl { color: #667eea; }
+    .hl2 { color: #4ade80; }
+    .hl3 { color: #facc15; }
+    .task-instructions h4 {
+      margin-bottom: 16px;
+      font-family: monospace;
+      color: #667eea;
+    }
+    .instruction-list {
+      list-style: none;
+      padding: 0;
+    }
+    .instruction-list li {
+      padding: 12px 0 12px 32px;
+      border-left: 2px solid #222;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .instruction-list li:before {
+      content: "→";
+      position: absolute;
+      left: 12px;
+      color: var(--tl-color);
+    }
+    .task-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      background: #0a0a0a;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #999;
+      border: 1px solid #222;
+    }
+    .meta-chip span {
+      color: #fff;
+      font-weight: 600;
+    }
 
-  /* ── NAV ── */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(5,10,15,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-  }
-  .nav-inner {
-    max-width: 1200px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px;
-  }
-  .logo {
-    font-family: var(--font-display);
-    font-weight: 800; font-size: 1.5rem;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .logo span { font-weight: 400; color: var(--muted); -webkit-text-fill-color: var(--muted); font-family: var(--font-mono); font-size: 0.75rem; margin-left: 8px; vertical-align: middle; }
-  .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a {
-    color: var(--muted); text-decoration: none; font-size: 0.8rem;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--accent); }
-  .nav-badge {
-    background: linear-gradient(135deg, var(--accent3), var(--accent));
-    color: #fff; font-size: 0.7rem; font-weight: 600;
-    padding: 4px 12px; border-radius: 20px; letter-spacing: 0.05em;
-  }
+    /* Rubric */
+    .rubric-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .rubric-card {
+      background: #1a1a1a;
+      border: 1px solid #222;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .rubric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .rubric-header:hover {
+      background: #0a0a0a;
+    }
+    .rubric-header-left {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .rubric-num {
+      width: 40px;
+      height: 40px;
+      background: #667eea;
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .rubric-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .rubric-cite {
+      font-size: 12px;
+      color: #666;
+      font-family: monospace;
+    }
+    .rubric-toggle {
+      color: #667eea;
+      font-size: 24px;
+      transition: transform 0.3s;
+    }
+    .rubric-card.expanded .rubric-toggle {
+      transform: rotate(180deg);
+    }
+    .rubric-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s;
+    }
+    .rubric-card.expanded .rubric-body {
+      max-height: 2000px;
+    }
+    .rubric-desc {
+      padding: 0 24px 20px;
+      color: #999;
+      line-height: 1.8;
+    }
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 0 24px 20px;
+    }
+    .score-cell {
+      background: #0a0a0a;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #222;
+    }
+    .score-val {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .s1 { background: #991b1b; color: #fca5a5; }
+    .s2 { background: #92400e; color: #fbbf24; }
+    .s3 { background: #065f46; color: #6ee7b7; }
+    .s4 { background: #1e3a8a; color: #93c5fd; }
+    .score-label {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .score-desc {
+      font-size: 13px;
+      color: #999;
+      line-height: 1.6;
+    }
+    .rrl-block {
+      background: #0a0a0a;
+      padding: 20px 24px;
+      margin: 0 24px 24px;
+      border-radius: 8px;
+      border: 1px solid #222;
+    }
+    .rrl-label {
+      font-size: 12px;
+      color: #667eea;
+      margin-bottom: 8px;
+      font-family: monospace;
+    }
+    .rrl-cite {
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.8;
+    }
 
-  /* ── HERO ── */
-  #hero {
-    padding: 100px 0 80px;
-    position: relative;
-  }
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
-    border-radius: 4px; padding: 6px 14px;
-    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
-    margin-bottom: 32px;
-    animation: fadeSlideUp 0.6s ease both;
-  }
-  .hero-eyebrow::before { content: '◆'; font-size: 0.5rem; }
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 12px;
-    animation: fadeSlideUp 0.6s ease 0.1s both;
-  }
-  .hero-title .line-1 { display: block; color: var(--text); }
-  .hero-title .line-2 {
-    display: block;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 60%, var(--accent2) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .hero-sub {
-    font-size: 0.95rem; line-height: 1.7; color: var(--muted);
-    max-width: 560px; margin-bottom: 48px;
-    animation: fadeSlideUp 0.6s ease 0.2s both;
-  }
-  #auth-section {
-    margin-bottom: 48px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    animation: fadeSlideUp 0.6s ease 0.25s both;
-  }
-  #login-form {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  #login-form input {
-    padding: 10px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    border-radius: 4px;
-    font-family: var(--font-mono);
-  }
-  #login-form input::placeholder {
-    color: var(--muted);
-  }
-  #login-form button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    color: #fff;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  #login-form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,212,255,0.25);
-  }
-  #user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--text);
-    display: none;
-  }
-  #user-info button {
-    padding: 10px 20px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  #user-info button:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .hero-stats {
-    display: flex; gap: 40px; flex-wrap: wrap;
-    animation: fadeSlideUp 0.6s ease 0.3s both;
-    margin-bottom: 48px;
-  }
-  .stat { }
-  .stat-num {
-    font-family: var(--font-display);
-    font-size: 2rem; font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+    /* About Section */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .about-text p {
+      margin-bottom: 20px;
+      color: #999;
+      line-height: 1.8;
+    }
+    .about-features {
+      margin-top: 40px;
+    }
+    .about-feat {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .feat-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .feat-text h5 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .feat-text p {
+      color: #666;
+      font-size: 14px;
+      margin: 0;
+    }
+    .taxonomy-visual {
+      background: #1a1a1a;
+      padding: 32px;
+      border-radius: 12px;
+      border: 1px solid #222;
+      position: sticky;
+      top: 100px;
+    }
+    #tax-visual {
+      margin-top: 24px;
+    }
+    .tax-item {
+      display: grid;
+      grid-template-columns: 140px 1fr 40px;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .tax-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .tax-bar-wrap {
+      background: #0a0a0a;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .tax-bar {
+      height: 100%;
+      border-radius: 4px;
+    }
+    .tax-level {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: monospace;
+    }
 
-  .hero-cta-row { display: flex; gap: 16px; flex-wrap: wrap; animation: fadeSlideUp 0.6s ease 0.4s both; }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    color: #fff; border: none; padding: 14px 32px;
-    font-family: var(--font-mono); font-size: 0.85rem;
-    font-weight: 500; letter-spacing: 0.05em;
-    border-radius: 4px; cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    text-decoration: none; display: inline-block;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.25); }
-  .btn-secondary {
-    background: transparent; color: var(--text);
-    border: 1px solid var(--border); padding: 14px 32px;
-    font-family: var(--font-mono); font-size: 0.85rem;
-    letter-spacing: 0.05em; border-radius: 4px; cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    text-decoration: none; display: inline-block;
-  }
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    /* Footer */
+    footer {
+      background: #0a0a0a;
+      border-top: 1px solid #222;
+      padding: 40px 0;
+      text-align: center;
+    }
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .footer-sub {
+      color: #666;
+      font-size: 14px;
+    }
 
-  /* ── SECTION HEADINGS ── */
-  .section-head {
-    margin-bottom: 56px;
-    animation: fadeSlideUp 0.5s ease both;
-  }
-  .section-tag {
-    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;
-  }
-  .section-title em { font-style: normal; color: var(--accent); }
-  .section-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; max-width: 500px; margin-top: 12px; }
-
-  /* ── DIVIDER ── */
-  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border) 40%, var(--border) 60%, transparent); margin: 0 0 80px; }
-
-  /* ── LEVELS SECTION ── */
-  #levels { padding: 80px 0; }
-  .levels-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-  }
-  .level-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 28px;
-    cursor: pointer;
-    transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
-    position: relative;
-    overflow: hidden;
-    animation: fadeSlideUp 0.5s ease both;
-  }
-  .level-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-    background: var(--card-color, var(--accent));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-  .level-card:hover::before, .level-card.active::before { transform: scaleX(1); }
-  .level-card:hover { border-color: var(--card-color, var(--accent)); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
-  .level-card.active {
-    border-color: var(--card-color, var(--accent));
-    background: rgba(0,212,255,0.04);
-    box-shadow: var(--glow);
-  }
-  .card-num {
-    font-family: var(--font-display); font-size: 3rem; font-weight: 800;
-    color: var(--card-color, var(--accent)); opacity: 0.15;
-    position: absolute; top: 16px; right: 20px;
-    line-height: 1;
-  }
-  .card-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--card-color, var(--accent));
-    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.15);
-    padding: 4px 10px; border-radius: 20px; margin-bottom: 14px;
-  }
-  .card-title {
-    font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
-    margin-bottom: 8px; letter-spacing: -0.01em;
-  }
-  .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
-  .card-arrow {
-    display: inline-flex; align-items: center; gap: 6px;
-    color: var(--card-color, var(--accent)); font-size: 0.75rem;
-    margin-top: 16px; transition: gap 0.2s;
-  }
-  .level-card:hover .card-arrow { gap: 10px; }
-
-  /* ── TASK PANEL ── */
-  #task-panel {
-    margin: 40px 0 80px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    animation: fadeSlideUp 0.4s ease both;
-    display: none;
-  }
-  #task-panel.visible { display: block; }
-
-  .task-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 28px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap; gap: 12px;
-  }
-  .task-header-left { display: flex; align-items: center; gap: 14px; }
-  .task-level-badge {
-    background: linear-gradient(135deg, var(--tl-color, var(--accent)), rgba(0,0,0,0.2));
-    border: 1px solid var(--tl-color, var(--accent));
-    color: var(--tl-color, var(--accent));
-    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 5px 12px; border-radius: 20px;
-    background: rgba(0,212,255,0.1);
-  }
-  .task-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
-  .task-close {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--muted); padding: 6px 14px; border-radius: 4px;
-    font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .task-close:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  .task-body { padding: 32px 28px; }
-
-  .task-objective {
-    background: rgba(0,212,255,0.05);
-    border: 1px solid rgba(0,212,255,0.15);
-    border-left: 3px solid var(--tl-color, var(--accent));
-    border-radius: 4px;
-    padding: 16px 20px;
-    font-size: 0.85rem; line-height: 1.7;
-    margin-bottom: 24px;
-  }
-  .task-objective strong { color: var(--accent); display: block; margin-bottom: 6px; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
-
-  .task-prompt-label {
-    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 12px;
-  }
-  .task-prompt-box {
-    background: #020810;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 20px 20px;
-    font-size: 0.87rem; line-height: 1.75; color: var(--text);
-    margin-bottom: 28px;
-    position: relative;
-  }
-  .task-prompt-box .hl { color: var(--accent); }
-  .task-prompt-box .hl2 { color: var(--accent2); }
-  .task-prompt-box .hl3 { color: var(--accent3); }
-
-  .task-instructions { }
-  .task-instructions h4 {
-    font-family: var(--font-display); font-size: 0.9rem; font-weight: 600;
-    margin-bottom: 14px; color: var(--text);
-  }
-  .instruction-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .instruction-list li {
-    display: flex; align-items: flex-start; gap: 12px;
-    font-size: 0.82rem; color: var(--muted); line-height: 1.6;
-  }
-  .instruction-list li::before {
-    content: '→';
-    color: var(--tl-color, var(--accent));
-    flex-shrink: 0; font-size: 0.85rem;
-  }
-
-  .task-meta {
-    display: flex; gap: 20px; flex-wrap: wrap;
-    margin-top: 28px; padding-top: 24px;
-    border-top: 1px solid var(--border);
-  }
-  .meta-chip {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 0.75rem; color: var(--muted);
-  }
-  .meta-chip span { color: var(--text); }
-
-  /* ── RUBRIC ── */
-  #rubric { padding: 80px 0; }
-  .rubric-grid { display: flex; flex-direction: column; gap: 20px; }
-  .rubric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    animation: fadeSlideUp 0.5s ease both;
-    transition: border-color 0.2s;
-  }
-  .rubric-card:hover { border-color: rgba(0,212,255,0.3); }
-  .rubric-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 24px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    gap: 12px;
-  }
-  .rubric-header-left { display: flex; align-items: center; gap: 14px; }
-  .rubric-num {
-    width: 32px; height: 32px; border-radius: 4px;
-    background: linear-gradient(135deg, var(--accent3), var(--accent));
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-size: 0.85rem; font-weight: 800;
-    color: #fff; flex-shrink: 0;
-  }
-  .rubric-title { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; }
-  .rubric-cite { font-size: 0.7rem; color: var(--muted); }
-  .rubric-toggle {
-    font-size: 1rem; color: var(--muted); transition: transform 0.3s;
-    flex-shrink: 0;
-  }
-  .rubric-card.expanded .rubric-toggle { transform: rotate(180deg); }
-  .rubric-body { display: none; padding: 24px; }
-  .rubric-card.expanded .rubric-body { display: block; }
-  .rubric-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
-  .score-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-    margin-bottom: 20px;
-  }
-  .score-cell {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 6px; padding: 14px 12px;
-    transition: border-color 0.2s;
-  }
-  .score-cell:hover { border-color: rgba(0,212,255,0.3); }
-  .score-val {
-    font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
-    line-height: 1; margin-bottom: 6px;
-  }
-  .score-val.s1 { color: #ef4444; }
-  .score-val.s2 { color: var(--accent2); }
-  .score-val.s3 { color: #eab308; }
-  .score-val.s4 { color: #22c55e; }
-  .score-label { font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .score-desc { font-size: 0.75rem; color: var(--text); line-height: 1.5; }
-  .rrl-block {
-    background: rgba(124,58,237,0.06); border: 1px solid rgba(124,58,237,0.2);
-    border-radius: 6px; padding: 14px 16px;
-  }
-  .rrl-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent3); margin-bottom: 8px; }
-  .rrl-cite { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
-  .rrl-cite strong { color: var(--text); }
-
-  /* ── ABOUT ── */
-  #about { padding: 80px 0; }
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-  .about-text p { font-size: 0.88rem; color: var(--muted); line-height: 1.8; margin-bottom: 16px; }
-  .about-text p strong { color: var(--text); }
-  .about-features { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
-  .about-feat {
-    display: flex; align-items: flex-start; gap: 14px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 6px; padding: 16px;
-    transition: border-color 0.2s;
-  }
-  .about-feat:hover { border-color: rgba(0,212,255,0.3); }
-  .feat-icon {
-    width: 36px; height: 36px; border-radius: 6px;
-    background: linear-gradient(135deg, var(--accent3), var(--accent));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; flex-shrink: 0;
-  }
-  .feat-text h5 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
-  .feat-text p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0; }
-
-  .about-visual {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 32px;
-    position: relative;
-    overflow: hidden;
-  }
-  .about-visual::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at top right, rgba(0,212,255,0.08), transparent 60%);
-  }
-  .taxonomy-visual { position: relative; z-index: 1; }
-  .tax-item {
-    display: flex; align-items: center; gap: 12px; padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    animation: fadeSlideRight 0.4s ease both;
-  }
-  .tax-item:last-child { border-bottom: none; }
-  .tax-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
-  .tax-bar { height: 100%; border-radius: 3px; transform-origin: left; }
-  .tax-name { font-family: var(--font-display); font-size: 0.82rem; font-weight: 600; min-width: 120px; }
-  .tax-level { font-size: 0.65rem; color: var(--muted); min-width: 20px; text-align: right; }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 40px 24px;
-    text-align: center;
-  }
-  .footer-inner { max-width: 1200px; margin: 0 auto; }
-  .footer-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .footer-sub { font-size: 0.78rem; color: var(--muted); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeSlideRight {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); }
-    100% { box-shadow: 0 0 0 20px rgba(0,212,255,0); }
-  }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-  /* ── RESPONSIVE ── */
-  @media(max-width: 768px) {
-    .nav-links { display: none; }
-    .about-grid { grid-template-columns: 1fr; }
-    .score-grid { grid-template-columns: repeat(2, 1fr); }
-    .hero-stats { gap: 24px; }
-    .task-body { padding: 24px 18px; }
-  }
-
-  /* ── TYPING CURSOR ── */
-  .cursor {
-    display: inline-block; width: 2px; height: 1em;
-    background: var(--accent); margin-left: 2px;
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-
-  /* ── PROGRESS BAR ── */
-  .task-progress {
-    display: flex; gap: 6px; margin-bottom: 20px;
-  }
-  .progress-step {
-    height: 3px; flex: 1; border-radius: 2px;
-    background: var(--border);
-    transition: background 0.4s;
-  }
-  .progress-step.done { background: var(--tl-color, var(--accent)); }
-</style>
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 48px; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .about-grid { grid-template-columns: 1fr; }
+      .score-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
-
-<!-- NAV -->
 <nav>
   <div class="nav-inner">
     <div class="logo">MetaForge <span>v0.1 alpha</span></div>
@@ -758,7 +845,7 @@
 // Firebase SDK imports and initialization
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration for metaforgedemo
 const firebaseConfig = {
@@ -776,15 +863,63 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+// ═══════════════════════════════════════════════
+// FIREBASE AUTHENTICATION & FIRESTORE FUNCTIONS
+// ═══════════════════════════════════════════════
+
+// Save user to Firestore
+async function saveUserToFirestore(user) {
+  try {
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || 'Anonymous',
+      createdAt: new Date().toISOString()
+    }, { merge: true });
+    console.log('User saved to Firestore');
+  } catch (error) {
+    console.error('Error saving user:', error);
+  }
+}
+
+// Save user progress/activity to Firestore
+async function saveUserProgress(userId, data) {
+  try {
+    await setDoc(doc(db, 'users', userId), {
+      lastActivity: new Date().toISOString(),
+      ...data
+    }, { merge: true });
+    console.log('Progress saved');
+  } catch (error) {
+    console.error('Error saving progress:', error);
+  }
+}
+
 // Firebase Authentication State Management
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   const loginForm = document.getElementById('login-form');
   const userInfo = document.getElementById('user-info');
   const userEmail = document.getElementById('user-email');
+  
   if (user) {
     loginForm.style.display = 'none';
     userInfo.style.display = 'flex';
-    userEmail.textContent = `Logged in as: ${user.email}`;
+    userEmail.textContent = Logged in as: ${user.email};
+    
+    // Save user to Firestore automatically
+    await saveUserToFirestore(user);
+    
+    // Load user data from Firestore
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        console.log('User data loaded:', userData);
+        // You can use userData here for displaying user stats, progress, etc.
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
   } else {
     loginForm.style.display = 'flex';
     userInfo.style.display = 'none';
@@ -796,7 +931,8 @@ window.loginEmail = async function() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    await saveUserToFirestore(result.user);
     alert('Login successful!');
   } catch (error) {
     alert('Login failed: ' + error.message);
@@ -806,9 +942,10 @@ window.loginEmail = async function() {
 // Email/Password Registration Function
 window.registerEmail = async function() {
   const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const password = document.getElementById('password').value);
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    await saveUserToFirestore(result.user);
     alert('Registration successful! You are now logged in.');
   } catch (error) {
     alert('Registration failed: ' + error.message);
@@ -818,7 +955,8 @@ window.registerEmail = async function() {
 // Google Login Function
 window.loginGoogle = async function() {
   try {
-    await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    await saveUserToFirestore(result.user);
     alert('Google login successful!');
   } catch (error) {
     alert('Google login failed: ' + error.message);
@@ -845,7 +983,7 @@ const LEVELS = [
     task: {
       title: "The Definition Task",
       objective: "Write a prompt that instructs an AI to recall and list key definitions and terminology. Your prompt should specify the domain, the number of terms expected, and the format of the output.",
-      prompt: `<span class="hl">// SCENARIO</span>\nYou are studying for an AI literacy exam covering fundamental concepts in machine learning.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt to an AI system that will cause it to generate a structured list of <span class="hl3">10 foundational machine learning terms</span> with their definitions.\n\nYour prompt should specify:\n• The <span class="hl">domain</span> (machine learning fundamentals)\n• The <span class="hl">number</span> of terms (exactly 10)\n• The <span class="hl">format</span> expected for each entry\n• The <span class="hl">difficulty level</span> (beginner-friendly)`,
+      prompt: <span class="hl">// SCENARIO</span>\nYou are studying for an AI literacy exam covering fundamental concepts in machine learning.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt to an AI system that will cause it to generate a structured list of <span class="hl3">10 foundational machine learning terms</span> with their definitions.\n\nYour prompt should specify:\n• The <span class="hl">domain</span> (machine learning fundamentals)\n• The <span class="hl">number</span> of terms (exactly 10)\n• The <span class="hl">format</span> expected for each entry\n• The <span class="hl">difficulty level</span> (beginner-friendly),
       instructions: [
         "Write your prompt in a separate document or paper.",
         "Be explicit about exactly what information you want recalled.",
@@ -868,7 +1006,7 @@ const LEVELS = [
     task: {
       title: "The Concept Translator",
       objective: "Write a prompt that directs an AI to explain a complex concept in accessible language. Your prompt must define the audience, depth of explanation, and use of analogies.",
-      prompt: `<span class="hl">// SCENARIO</span>\nYou're creating study material for high school students who have no prior coding experience.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to explain <span class="hl3">how neural networks learn</span> to a non-technical audience.\n\nYour prompt should include:\n• <span class="hl">Audience definition</span> (age group, background)\n• A request for an <span class="hl">analogy</span> to make the concept relatable\n• <span class="hl">Length constraints</span> (e.g., 200–250 words)\n• Instruction to <span class="hl">avoid jargon</span> or define any technical term used\n• A <span class="hl">summary sentence</span> at the end`,
+      prompt: <span class="hl">// SCENARIO</span>\nYou're creating study material for high school students who have no prior coding experience.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to explain <span class="hl3">how neural networks learn</span> to a non-technical audience.\n\nYour prompt should include:\n• <span class="hl">Audience definition</span> (age group, background)\n• A request for an <span class="hl">analogy</span> to make the concept relatable\n• <span class="hl">Length constraints</span> (e.g., 200–250 words)\n• Instruction to <span class="hl">avoid jargon</span> or define any technical term used\n• A <span class="hl">summary sentence</span> at the end,
       instructions: [
         "Draft a prompt that specifies audience clearly — don't just say 'explain simply'.",
         "Include explicit instructions about analogies and examples.",
@@ -891,7 +1029,7 @@ const LEVELS = [
     task: {
       title: "The Problem Solver",
       objective: "Write a prompt that instructs an AI to solve a specific, well-defined problem using domain knowledge. Your prompt should specify context, constraints, and expected solution format.",
-      prompt: `<span class="hl">// SCENARIO</span>\nA small business owner needs to reduce customer churn and has asked for an AI-generated action plan.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt instructing an AI to <span class="hl3">create a 30-day customer retention plan</span> for a subscription-based software product.\n\nYour prompt should include:\n• <span class="hl">Role prompting</span> — assign the AI a relevant persona\n• The <span class="hl">business context</span> (type of product, average users, churn rate ~15%)\n• <span class="hl">Specific deliverables</span> (weekly milestones, tactics per week)\n• <span class="hl">Format requirements</span> (structured table or phased plan)\n• A constraint: <span class="hl">budget under $500/month</span>`,
+      prompt: <span class="hl">// SCENARIO</span>\nA small business owner needs to reduce customer churn and has asked for an AI-generated action plan.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt instructing an AI to <span class="hl3">create a 30-day customer retention plan</span> for a subscription-based software product.\n\nYour prompt should include:\n• <span class="hl">Role prompting</span> — assign the AI a relevant persona\n• The <span class="hl">business context</span> (type of product, average users, churn rate ~15%)\n• <span class="hl">Specific deliverables</span> (weekly milestones, tactics per week)\n• <span class="hl">Format requirements</span> (structured table or phased plan)\n• A constraint: <span class="hl">budget under $500/month</span>,
       instructions: [
         "Use role prompting — assign a persona like 'Act as a Customer Success strategist'.",
         "Provide enough context so the AI doesn't make assumptions about the business.",
@@ -914,7 +1052,7 @@ const LEVELS = [
     task: {
       title: "The Comparative Analyst",
       objective: "Write a prompt that instructs an AI to analyze and compare two or more subjects across multiple structured dimensions. Your prompt must specify the comparison criteria and output structure.",
-      prompt: `<span class="hl">// SCENARIO</span>\nYou are preparing a research brief comparing two competing AI language model approaches for a graduate seminar.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">compare GPT-style autoregressive models vs BERT-style masked models</span> across multiple analytical dimensions.\n\nYour prompt must specify:\n• Exactly <span class="hl">which dimensions</span> to compare (e.g., architecture, training objective, use cases, strengths/weaknesses)\n• Output as a <span class="hl">structured comparison table</span> with rows per dimension\n• A <span class="hl">brief analytical paragraph</span> after the table synthesizing key differences\n• A <span class="hl">chain-of-thought directive</span> — ask the AI to reason step-by-step before concluding\n• Minimum <span class="hl">4 comparison dimensions</span>`,
+      prompt: <span class="hl">// SCENARIO</span>\nYou are preparing a research brief comparing two competing AI language model approaches for a graduate seminar.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">compare GPT-style autoregressive models vs BERT-style masked models</span> across multiple analytical dimensions.\n\nYour prompt must specify:\n• Exactly <span class="hl">which dimensions</span> to compare (e.g., architecture, training objective, use cases, strengths/weaknesses)\n• Output as a <span class="hl">structured comparison table</span> with rows per dimension\n• A <span class="hl">brief analytical paragraph</span> after the table synthesizing key differences\n• A <span class="hl">chain-of-thought directive</span> — ask the AI to reason step-by-step before concluding\n• Minimum <span class="hl">4 comparison dimensions</span>,
       instructions: [
         "Define each comparison axis explicitly — don't leave any dimension open to interpretation.",
         "Request chain-of-thought: 'Before generating the table, reason through each dimension.'",
@@ -937,7 +1075,7 @@ const LEVELS = [
     task: {
       title: "The Critical Evaluator",
       objective: "Write a prompt that asks an AI to evaluate and rank multiple options against explicit criteria, justify each judgment, and produce a final recommendation with caveats.",
-      prompt: `<span class="hl">// SCENARIO</span>\nYour university's computer science department is selecting a programming language to teach first-year students in their intro course.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">evaluate and rank Python, JavaScript, and Java</span> as first-year teaching languages.\n\nYour prompt must include:\n• <span class="hl">Five explicit evaluation criteria</span> (e.g., learning curve, ecosystem, employability, readability, tooling)\n• A <span class="hl">weighted scoring instruction</span> — define which criteria matter most\n• Request a <span class="hl">ranked comparison table</span> then a justified final recommendation\n• Ask the AI to <span class="hl">acknowledge counterarguments</span> to its recommendation\n• Include a directive to <span class="hl">cite reasoning</span> for each score given`,
+      prompt: <span class="hl">// SCENARIO</span>\nYour university's computer science department is selecting a programming language to teach first-year students in their intro course.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a prompt asking an AI to <span class="hl3">evaluate and rank Python, JavaScript, and Java</span> as first-year teaching languages.\n\nYour prompt must include:\n• <span class="hl">Five explicit evaluation criteria</span> (e.g., learning curve, ecosystem, employability, readability, tooling)\n• A <span class="hl">weighted scoring instruction</span> — define which criteria matter most\n• Request a <span class="hl">ranked comparison table</span> then a justified final recommendation\n• Ask the AI to <span class="hl">acknowledge counterarguments</span> to its recommendation\n• Include a directive to <span class="hl">cite reasoning</span> for each score given,
       instructions: [
         "Define all five criteria before asking for evaluation — do not let AI choose criteria.",
         "Assign weights (e.g., 'weight readability 30%, employability 25%...').",
@@ -960,7 +1098,7 @@ const LEVELS = [
     task: {
       title: "The Prompt Architect",
       objective: "Write a meta-prompt — a prompt that generates another high-quality prompt. Your meta-prompt must specify all elements of the output prompt including its structure, strategies, format, and evaluation criteria it should satisfy.",
-      prompt: `<span class="hl">// SCENARIO</span>\nYou are designing a prompt template library for an educational technology startup. You need to create reusable, high-quality prompts that teachers can deploy for different subjects.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a <span class="hl3">meta-prompt</span> — a prompt that instructs an AI to generate a complete, production-ready prompt template for teaching <span class="hl3">critical thinking skills in high school history</span>.\n\nYour meta-prompt must specify that the generated prompt should include:\n• <span class="hl">Role assignment</span> for the AI (Socratic tutor, debate facilitator, etc.)\n• <span class="hl">Scaffolded sub-questions</span> using decomposition\n• <span class="hl">Format directives</span> (how output should be structured for student use)\n• <span class="hl">Cognitive demand level</span> targeting analysis and evaluation\n• <span class="hl">Modifiable variables</span> marked with [BRACKETS] for teacher customization\n• A built-in <span class="hl">self-evaluation checklist</span> at the end of the template`,
+      prompt: <span class="hl">// SCENARIO</span>\nYou are designing a prompt template library for an educational technology startup. You need to create reusable, high-quality prompts that teachers can deploy for different subjects.\n\n<span class="hl2">YOUR TASK:</span>\nWrite a <span class="hl3">meta-prompt</span> — a prompt that instructs an AI to generate a complete, production-ready prompt template for teaching <span class="hl3">critical thinking skills in high school history</span>.\n\nYour meta-prompt must specify that the generated prompt should include:\n• <span class="hl">Role assignment</span> for the AI (Socratic tutor, debate facilitator, etc.)\n• <span class="hl">Scaffolded sub-questions</span> using decomposition\n• <span class="hl">Format directives</span> (how output should be structured for student use)\n• <span class="hl">Cognitive demand level</span> targeting analysis and evaluation\n• <span class="hl">Modifiable variables</span> marked with [BRACKETS] for teacher customization\n• A built-in <span class="hl">self-evaluation checklist</span> at the end of the template,
       instructions: [
         "This is a meta-task: your prompt must CREATE another prompt. Think recursively.",
         "Specify exactly what components the output prompt should contain — don't be vague.",
@@ -1073,7 +1211,7 @@ LEVELS.forEach((lv, i) => {
   const card = document.createElement('div');
   card.className = 'level-card';
   card.style.setProperty('--card-color', lv.color);
-  card.style.animationDelay = `${i * 0.08}s`;
+  card.style.animationDelay = ${i * 0.08}s;
   card.innerHTML = `
     <div class="card-num">${lv.id}</div>
     <div class="card-badge" style="color:${lv.color};background:${lv.color}18;border-color:${lv.color}33;">${lv.icon} Level ${lv.id}</div>
@@ -1098,7 +1236,7 @@ function openTask(lv, card) {
   panel.classList.add('visible');
 
   // Badge & title
-  document.getElementById('tp-badge').textContent = `Level ${lv.id} · ${lv.bloom}`;
+  document.getElementById('tp-badge').textContent = Level ${lv.id} · ${lv.bloom};
   document.getElementById('tp-badge').style.color = lv.color;
   document.getElementById('tp-badge').style.borderColor = lv.color + '55';
   document.getElementById('tp-badge').style.background = lv.color + '18';
@@ -1109,13 +1247,13 @@ function openTask(lv, card) {
   prog.innerHTML = '';
   for (let i = 1; i <= 6; i++) {
     const s = document.createElement('div');
-    s.className = `progress-step${i <= lv.id ? ' done' : ''}`;
+    s.className = progress-step${i <= lv.id ? ' done' : ''};
     if (i <= lv.id) s.style.background = lv.color;
     prog.appendChild(s);
   }
 
   // Objective
-  document.getElementById('tp-objective').innerHTML = `<strong>🎯 Learning Objective</strong>${lv.task.objective}`;
+  document.getElementById('tp-objective').innerHTML = <strong>🎯 Learning Objective</strong>${lv.task.objective};
 
   // Prompt box
   document.getElementById('tp-prompt').innerHTML = lv.task.prompt.replace(/\n/g, '<br>');
@@ -1123,7 +1261,7 @@ function openTask(lv, card) {
   // Instructions
   const instEl = document.getElementById('tp-instructions');
   instEl.innerHTML = `<h4>// How to Approach This Task</h4><ul class="instruction-list">${
-    lv.task.instructions.map(i => `<li>${i}</li>`).join('')
+    lv.task.instructions.map(i => <li>${i}</li>).join('')
   }</ul>`;
 
   // Meta
@@ -1150,7 +1288,7 @@ const rubricGrid = document.getElementById('rubric-grid');
 RUBRIC.forEach((r, i) => {
   const card = document.createElement('div');
   card.className = 'rubric-card';
-  card.style.animationDelay = `${i * 0.07}s`;
+  card.style.animationDelay = ${i * 0.07}s;
   card.innerHTML = `
     <div class="rubric-header" onclick="toggleRubric(this)">
       <div class="rubric-header-left">
@@ -1194,7 +1332,7 @@ const taxVis = document.getElementById('tax-visual');
 TAX_DATA.forEach((t, i) => {
   const row = document.createElement('div');
   row.className = 'tax-item';
-  row.style.animationDelay = `${i * 0.1}s`;
+  row.style.animationDelay = ${i * 0.1}s;
   row.innerHTML = `
     <div class="tax-name" style="color:${t.color}">${t.name}</div>
     <div class="tax-bar-wrap">
